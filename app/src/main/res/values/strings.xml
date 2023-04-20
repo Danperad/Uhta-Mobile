@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Uhta Mobile</string>
+    <string name="auth_title">Авторизация</string>
+    <string name="auth_login_placeholder">Логин</string>
+    <string name="auth_password_placeholder">Пароль</string>
+    <string name="auth_login_button">Войти</string>
+    <string name="bottombar_application_description">Заявки</string>
+    <string name="bottombar_devices_description">Приборы</string>
+    <string name="bottombar_report_description">Отчеты</string>
+    <string name="bottombar_archive_description">Архив</string>
+</resources>
