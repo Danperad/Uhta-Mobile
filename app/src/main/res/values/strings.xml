@@ -4,8 +4,19 @@
     <string name="auth_login_placeholder">Логин</string>
     <string name="auth_password_placeholder">Пароль</string>
     <string name="auth_login_button">Войти</string>
-    <string name="bottombar_application_description">Заявки</string>
-    <string name="bottombar_devices_description">Приборы</string>
-    <string name="bottombar_report_description">Отчеты</string>
-    <string name="bottombar_archive_description">Архив</string>
+    <string name="device_topbar_title">Приборы</string>
+    <string name="exit_button_description">Выход из профиля</string>
+    <string name="device_create_description">Добавить Прибор</string>
+    <string name="edit_create_title">Добавление</string>
+    <string name="edit_edit_title">Редактирование</string>
+    <string name="edit_cancel_text">Отмена</string>
+    <string name="edit_save_text">Сохранить</string>
+    <string name="edit_add_text">Добавить</string>
+    <string name="device_title_placeholder">Наименование</string>
+    <string name="device_csss_placeholder">КССС</string>
+    <string name="device_nr_placeholder">№R-3</string>
+    <string name="device_unit_placeholder">Единица измерения</string>
+    <string name="device_inoperation_placeholder">Кол-во в эксплуатации</string>
+    <string name="device_instock_placeholder">Кол-во на складе</string>
+    <string name="device_total_placeholder">Количество</string>
 </resources>

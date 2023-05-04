@@ -1,4 +1,4 @@
-package com.vyatsu.uhtamobile.ui.views
+package com.vyatsu.uhtamobile.views
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
@@ -9,39 +9,43 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import com.vyatsu.uhtamobile.R
-import com.vyatsu.uhtamobile.ui.UhtaViewModel
+import com.vyatsu.uhtamobile.viewmodels.UhtaViewModel
 import com.vyatsu.uhtamobile.ui.theme.UhtaMobileTheme
-
 
 @Composable
 fun AuthView(viewModel: UhtaViewModel, onAuth: () -> Unit) {
+    val uiState = viewModel.uiState.collectAsState().value
     val scaffoldState = rememberScaffoldState()
     var login by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    LaunchedEffect(key1 = uiState.employee, block = {
+        if (uiState.employee == null) return@LaunchedEffect
+        onAuth()
+    })
     Scaffold(
+        modifier = Modifier.fillMaxSize(),
         scaffoldState = scaffoldState,
-        topBar = { AuthTopBar() },
-        bottomBar = { AuthBottomBar() }) { paddingValues ->
+        topBar = { AuthTopBar() }) { paddingValues ->
         Column(
-            modifier = Modifier.padding(paddingValues).fillMaxSize(),
+            modifier = Modifier
+                .padding(paddingValues)
+                .fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
             TextField(
                 value = login,
-                onValueChange = { login = it },
+                onValueChange = { login = it.trim() },
                 singleLine = true,
                 placeholder = { Text(stringResource(R.string.auth_login_placeholder)) })
             TextField(
                 value = password,
-                onValueChange = { password = it },
+                onValueChange = { password = it.trim() },
                 singleLine = true,
                 visualTransformation = PasswordVisualTransformation(),
                 placeholder = { Text(stringResource(R.string.auth_password_placeholder)) })
             Button(onClick = {
-                if (viewModel.auth(login, password)) {
-                    onAuth()
-                }
+                viewModel.login(login, password)
             }) {
                 Text(stringResource(R.string.auth_login_button))
             }
@@ -57,12 +61,6 @@ private fun AuthTopBar() {
         Spacer(modifier = Modifier.weight(1.0f))
     }
 }
-
-@Composable
-private fun AuthBottomBar() {
-    BottomAppBar { }
-}
-
 @Preview
 @Composable
 private fun AuthPreview() {

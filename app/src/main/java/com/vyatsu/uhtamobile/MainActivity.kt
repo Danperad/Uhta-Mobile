@@ -10,24 +10,56 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.vyatsu.uhtamobile.ui.BottomBar
-import com.vyatsu.uhtamobile.ui.views.AuthView
-import com.vyatsu.uhtamobile.ui.UhtaViewModel
-import com.vyatsu.uhtamobile.ui.views.ApplicationView
+import com.vyatsu.uhtamobile.views.AuthView
+import com.vyatsu.uhtamobile.viewmodels.UhtaViewModel
 import com.vyatsu.uhtamobile.ui.theme.UhtaMobileTheme
+import com.vyatsu.uhtamobile.views.DeviceView
+import com.vyatsu.uhtamobile.views.EditDeviceView
 
 class MainActivity : ComponentActivity() {
     private val viewModel = UhtaViewModel()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            val navController = rememberNavController();
+            val navController = rememberNavController()
             UhtaMobileTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
-                    NavHost(navController = navController, startDestination = "auth"){
-                        composable("auth") { AuthView(viewModel) { navController.navigate("application") } }
-                        composable("application") { ApplicationView(viewModel) { BottomBar(navController) } }
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colors.background
+                ) {
+                    NavHost(navController = navController, startDestination = "auth") {
+                        composable("auth") {
+                            AuthView(viewModel) {
+                                navController.navigate("devices") {
+                                    popUpTo("auth") {
+                                        inclusive = true
+                                    }
+                                }
+                            }
+                        }
+                        composable("devices") {
+                            DeviceView(
+                                viewModel = viewModel,
+                                logout = {
+                                    viewModel.logout()
+                                    navController.navigate("auth") {
+                                        popUpTo("devices"){
+                                            inclusive = true
+                                        }
+                                    }
+                                },
+                                navigateToEdit = { navController.navigate("edit") }
+                            )
+                        }
+                        composable("edit") {
+                            EditDeviceView(viewModel = viewModel, exitEdit = {
+                                navController.navigate("devices"){
+                                    popUpTo("edit"){
+                                        inclusive = true
+                                    }
+                                }
+                            })
+                        }
                     }
                 }
             }
