@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -17,10 +18,11 @@ import com.vyatsu.uhtamobile.views.DeviceView
 import com.vyatsu.uhtamobile.views.EditDeviceView
 
 class MainActivity : ComponentActivity() {
-    private val viewModel = UhtaViewModel()
+    private lateinit var viewModel  : UhtaViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
+            viewModel = UhtaViewModel(LocalContext.current)
             val navController = rememberNavController()
             UhtaMobileTheme {
                 Surface(

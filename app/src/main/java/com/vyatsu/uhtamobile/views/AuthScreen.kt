@@ -5,16 +5,20 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import com.vyatsu.uhtamobile.R
 import com.vyatsu.uhtamobile.viewmodels.UhtaViewModel
 import com.vyatsu.uhtamobile.ui.theme.UhtaMobileTheme
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @Composable
 fun AuthView(viewModel: UhtaViewModel, onAuth: () -> Unit) {
     val uiState = viewModel.uiState.collectAsState().value
+    val coroutineScope = rememberCoroutineScope()
     val scaffoldState = rememberScaffoldState()
     var login by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -45,7 +49,9 @@ fun AuthView(viewModel: UhtaViewModel, onAuth: () -> Unit) {
                 visualTransformation = PasswordVisualTransformation(),
                 placeholder = { Text(stringResource(R.string.auth_password_placeholder)) })
             Button(onClick = {
-                viewModel.login(login, password)
+                coroutineScope.launch(Dispatchers.IO) {
+                    viewModel.login(login, password)
+                }
             }) {
                 Text(stringResource(R.string.auth_login_button))
             }
@@ -61,10 +67,11 @@ private fun AuthTopBar() {
         Spacer(modifier = Modifier.weight(1.0f))
     }
 }
+
 @Preview
 @Composable
 private fun AuthPreview() {
-    val uhtaViewModel = UhtaViewModel()
+    val uhtaViewModel = UhtaViewModel(LocalContext.current)
     UhtaMobileTheme {
         AuthView(uhtaViewModel) { }
     }

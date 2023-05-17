@@ -18,18 +18,29 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.vyatsu.uhtamobile.R
 import com.vyatsu.uhtamobile.ui.theme.UhtaMobileTheme
 import com.vyatsu.uhtamobile.viewmodels.UhtaViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @Composable
 fun DeviceView(viewModel: UhtaViewModel, logout: () -> Unit, navigateToEdit: () -> Unit) {
     val scaffoldState = rememberScaffoldState()
+    val coroutineScope = rememberCoroutineScope()
     val uiState = viewModel.uiState.collectAsState().value
+    LaunchedEffect(Unit){
+        coroutineScope.launch(Dispatchers.IO) {
+            viewModel.loadDevices()
+        }
+    }
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         scaffoldState = scaffoldState,
@@ -74,7 +85,7 @@ private fun AddButton(viewModel: UhtaViewModel, navigateToCreate: () -> Unit) {
 @Preview
 @Composable
 private fun DevicePreview() {
-    val viewModel = UhtaViewModel()
+    val viewModel = UhtaViewModel(LocalContext.current)
     UhtaMobileTheme {
         DeviceView(viewModel, logout = {}, navigateToEdit = {})
     }

@@ -25,9 +25,11 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
@@ -35,11 +37,14 @@ import com.vyatsu.uhtamobile.R
 import com.vyatsu.uhtamobile.models.Device
 import com.vyatsu.uhtamobile.ui.theme.UhtaMobileTheme
 import com.vyatsu.uhtamobile.viewmodels.UhtaViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @Composable
 fun EditDeviceView(viewModel: UhtaViewModel, exitEdit: () -> Unit) {
     val scaffoldState = rememberScaffoldState()
     val uiState = viewModel.uiState.collectAsState().value
+    val coroutineScope = rememberCoroutineScope()
 
     @Composable
     fun getTitle(): String {
@@ -80,8 +85,10 @@ fun EditDeviceView(viewModel: UhtaViewModel, exitEdit: () -> Unit) {
                 viewModel = viewModel,
                 onSaveDevice = {
                     val device = getDevice() ?: return@BottomBar
-                    viewModel.saveDevice(device)
-                    exitEdit()
+                    coroutineScope.launch(Dispatchers.IO) {
+                        viewModel.saveDevice(device)
+                        exitEdit()
+                    }
                 },
                 exitEdit = exitEdit
             )
@@ -251,7 +258,7 @@ private fun BottomBar(viewModel: UhtaViewModel, onSaveDevice: () -> Unit, exitEd
 @Preview
 @Composable
 private fun EditeDevicePreview() {
-    val uhtaViewModel = UhtaViewModel()
+    val uhtaViewModel = UhtaViewModel(LocalContext.current)
     UhtaMobileTheme {
         EditDeviceView(uhtaViewModel) {}
     }
