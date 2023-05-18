@@ -19,13 +19,13 @@ interface DanperadApi {
         @Query("search") search: String
     ): Call<List<Device>>
 
-    @Headers("Accept: Application/json")
-    @POST("auth/")
+    @Headers("Accept: Application/json", "Content-Type: application/json")
+    @POST("user/auth")
     fun authUser(
         @Body model: AuthModel
     ): Call<Employee>
 
-    @Headers("Accept: Application/json")
+    @Headers("Accept: Application/json", "Content-Type: application/json")
     @POST("devices/")
     fun saveDevise(
         @Body device: Device

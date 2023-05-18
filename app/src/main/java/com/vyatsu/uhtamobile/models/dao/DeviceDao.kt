@@ -16,4 +16,7 @@ interface DeviceDao {
 
     @Update
     fun update(vararg device: Device)
+
+    @Query("DELETE FROM device")
+    fun clear()
 }

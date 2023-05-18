@@ -1,3 +1,7 @@
 package com.vyatsu.uhtamobile.models
 
-data class AuthModel(val login: String, val password: String)
+import com.google.gson.annotations.SerializedName
+
+data class AuthModel(
+    @SerializedName("login")val login: String,
+    @SerializedName("password")val password: String)

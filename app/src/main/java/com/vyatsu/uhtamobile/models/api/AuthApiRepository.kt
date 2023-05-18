@@ -7,7 +7,8 @@ import retrofit2.awaitResponse
 class AuthApiRepository {
     suspend fun authEmployee(login: String, password: String): Employee? {
         return try {
-            val call = RestClient.client.getService().authUser(AuthModel(login, password))
+            val model = AuthModel(login, password)
+            val call = RestClient.client.getService().authUser(model)
             val response = call.awaitResponse()
             if(response.isSuccessful) {
                 response.body()

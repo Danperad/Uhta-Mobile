@@ -29,7 +29,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
@@ -61,6 +60,15 @@ fun EditDeviceView(viewModel: UhtaViewModel, exitEdit: () -> Unit) {
     val unit = remember { mutableStateOf("ШТ") }
     val inOperation = remember { mutableStateOf<Int?>(null) }
     val inStock = remember { mutableStateOf<Int?>(null) }
+    if (uiState.devicesUiState.selectedDevice != null){
+        val device = uiState.devicesUiState.selectedDevice
+        title.value = device.title
+        csss.value = device.csss
+        nr.value = device.nr3
+        unit.value = device.unitType
+        inOperation.value = device.inOperation
+        inStock.value = device.inStock
+    }
     fun getDevice(): Device? {
         if (csss.value == null) return null
         if (nr.value == null) return null
@@ -258,7 +266,7 @@ private fun BottomBar(viewModel: UhtaViewModel, onSaveDevice: () -> Unit, exitEd
 @Preview
 @Composable
 private fun EditeDevicePreview() {
-    val uhtaViewModel = UhtaViewModel(LocalContext.current)
+    val uhtaViewModel = UhtaViewModel()
     UhtaMobileTheme {
         EditDeviceView(uhtaViewModel) {}
     }

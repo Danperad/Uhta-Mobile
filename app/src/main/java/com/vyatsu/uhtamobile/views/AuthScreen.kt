@@ -5,7 +5,6 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
@@ -71,7 +70,7 @@ private fun AuthTopBar() {
 @Preview
 @Composable
 private fun AuthPreview() {
-    val uhtaViewModel = UhtaViewModel(LocalContext.current)
+    val uhtaViewModel = UhtaViewModel()
     UhtaMobileTheme {
         AuthView(uhtaViewModel) { }
     }

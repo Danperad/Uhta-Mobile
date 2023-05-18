@@ -13,7 +13,7 @@ class RestClient {
         val client = RestClient()
     }
     init {
-        val baseUrl = "http://danperad.ru:8081/api/"
+        val baseUrl = "http://ten.danperad.ru/undefined/api/"
         val client = OkHttpClient.Builder()
         client.connectTimeout(2, TimeUnit.MINUTES)
         client.readTimeout(2, TimeUnit.MINUTES)

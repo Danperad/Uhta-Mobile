@@ -12,41 +12,61 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-class UhtaViewModel(appContext: Context) : ViewModel() {
+class UhtaViewModel : ViewModel() {
     private val deviceApiRepository = DeviceApiRepository()
     private val authApiRepository = AuthApiRepository()
-    private val employeeRepository: EmployeeRepository
-    private val deviceRepository: DeviceRepository
+    private lateinit var employeeRepository: EmployeeRepository
+    private lateinit var deviceRepository: DeviceRepository
     private val _uiState = MutableStateFlow(UhtaUiState())
     val uiState = _uiState.asStateFlow()
-
-    init {
+    fun loadDatabase(appContext: Context) {
         val db = AppDatabase.getDataBase(appContext)
         employeeRepository = EmployeeRepository(db.employeeDao())
         deviceRepository = DeviceRepository(db.deviceDao())
+        loadData()
     }
-    suspend fun login(login: String, password: String){
+
+    private fun loadData() {
+        val employees = employeeRepository.getAllEmployee()
+        val employee = if (employees.isEmpty()) {
+            null
+        } else {
+            employees[0]
+        }
+        val devices = deviceRepository.getAllDevices()
+        _uiState.update {
+            UhtaUiState(employee, DevicesUiState(devices), true)
+        }
+    }
+
+    suspend fun login(login: String, password: String) {
         val res = authApiRepository.authEmployee(login, password)
+        if (res != null)
+            employeeRepository.insertEmployee(res)
         _uiState.update {
             it.updateEmployee(res)
         }
     }
 
-    fun logout(){
-        _uiState.update { it.updateEmployee(null) }
+    fun logout() {
+        if (_uiState.value.employee != null)
+            employeeRepository.deleteEmployee(_uiState.value.employee!!)
+        _uiState.update { UhtaUiState(null, DevicesUiState(), true) }
     }
 
-    suspend fun loadDevices(){
+    suspend fun loadDevices() {
+        deviceRepository.deleteDevices()
         val res = deviceApiRepository.fetchDevices()
+        deviceRepository.insertDevices(*res.toTypedArray())
         _uiState.update { it.copy(devicesUiState = DevicesUiState(res)) }
     }
 
-    fun selectDevice(device: Device?){
-        _uiState.update { it.updateDeviceUiState(it.devicesUiState.selectDevice(device)) }
+    fun selectDevice(device: Device?) {
+        _uiState.update { UhtaUiState(it.employee, DevicesUiState(it.devicesUiState.devices, device), it.isLoaded) }
     }
 
-    suspend fun saveDevice(device: Device){
-        if (deviceApiRepository.saveDevice(device) == null)return
+    suspend fun saveDevice(device: Device) {
+        if (deviceApiRepository.saveDevice(device) == null) return
         loadDevices()
     }
 }
